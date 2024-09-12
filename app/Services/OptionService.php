@@ -13,20 +13,29 @@ class OptionService
 
     public function all()
     {
+        // Start building the query
         $options = Option::query();
 
+        // Apply search filter if 'search' is filled
         $options->when(request()->filled('search'), function ($query) {
             $search = request()->search;
             $query->where('name', 'LIKE', '%' . $search . '%');
         });
 
+        // Apply exact name filter if 'name' is filled
         $options->when(request()->filled('name'), function ($query) {
             $query->where('name', request()->name);
         });
-        $options = Option::orderByDesc('id')->paginate(5);
+
+        // Apply ordering and pagination
+        $options = $options->orderByDesc('id')->paginate(5);
 
         return compact('options');
     }
+
+
+
+
     public function store(array $data)
     {
 

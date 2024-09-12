@@ -15,18 +15,24 @@ class OptionValueService
 
     public function all()
     {
+        // Start building the query
         $optionvalues = OptionValue::query();
 
+        // Apply search filter if 'search' is filled
         $optionvalues->when(request()->filled('search'), function ($query) {
             $search = request()->search;
-            $query->where('name', 'LIKE', '%' . $search . '%');
+            $query->where('value', 'LIKE', '%' . $search . '%');
         });
 
-        $optionvalues->when(request()->filled('name'), function ($query) {
-            $query->where('name', request()->name);
+        // Apply exact name filter if 'name' is filled
+        $optionvalues->when(request()->filled('value'), function ($query) {
+            $query->where('value', request()->value);
         });
-        $optionvalues = OptionValue::orderByDesc('id')->paginate(5);
 
+        // Apply ordering and pagination
+        $optionvalues = $optionvalues->orderByDesc('id')->paginate(5);
+
+        // Return the result as a compacted array
         return compact('optionvalues');
     }
 
@@ -39,6 +45,7 @@ class OptionValueService
 
     public function store(Array $data)
     {
+
         $optionvalue = OptionValue::create($data);
         return $optionvalue;
     }

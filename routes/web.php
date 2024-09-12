@@ -3,12 +3,12 @@
 use App\Models\Admin\Product;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
-use App\Http\Controllers\OptionController;
 
+use App\Http\Controllers\OptionController;
 use App\Http\Controllers\Web\WebController;
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\HomeController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\StateController;
 use App\Http\Controllers\OptionValueController;
@@ -51,7 +51,7 @@ Route::group(['prefix'=>'Admin'],function(){
 
 
 
-
+// for add to cart and add to favorite auth
     Route::group(['middleware'=>'guest'],function(){
         Route::get('/auth-register',[AuthController::class,'register'])->name('auth.register');
         Route::post('/process-register',[AuthController::class,'processRegister'])->name('auth.processRegister');
@@ -73,6 +73,11 @@ Route::group(['prefix'=>'Admin'],function(){
 
 
 
+// In routes/web.php or routes/api.php
+Route::get('/cart/items', [CartController::class, 'getCartItems'])->name('cart.items');
+
+
+
 Route::resource('categories',CategoryController::class);
 Route::resource('states',StateController::class);
 Route::resource('options',OptionController::class);
@@ -83,13 +88,18 @@ Route::get('web/products',[WebProductController::class,'index'])->name('product.
 Route::get('search',[WebProductController::class,'search'])->name('search');
 Route::get('filterByCategory/{category}',[WebProductController::class,'filterByCategory'])->name('filterByCategory');
 Route::get('productDetail/{id}',[WebProductController::class,'productDetail'])->name('productDetail');
+
 Route::post('/product/{product}/review',[WebProductController::class,'review'])->name('product.review');
 Route::post('/add-to-favorites/{product}', [WebProductController::class, 'addToFavorites'])->name('add-to-favorites')->middleware('auth');
 
 
 Route::get('add-to-cart/{id}', [CartController::class, 'addToCart'])->name('add_to_cart');
 Route::get('cart', [CartController::class, 'cart'])->name('cart');
-Route::delete('remove-from-cart', [CartController::class, 'remove'])->name('remove_from_cart');
+
+
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('remove_from_cart');
+Route::get('/cart/remove/{id}', [CartController::class, 'remove'])->name('removefrom_cart');
+
 Route::patch('update-cart', [CartController::class, 'update'])->name('update_cart');
 Route::get('checkout', [CartController::class, 'checkout'])->name('checkout');
 

@@ -19,62 +19,61 @@
     </div>
 </section>
 
-<table id="cart" class="table table-hover table-condensed">
+@if($cartItems->isEmpty())
+<p>Your cart is empty.</p>
+@else
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th style="width:50%">Product</th>
-            <th style="width:10%">Price</th>
-            <th style="width:8%">Quantity</th>
-            <th style="width:22%" class="text-center">Subtotal</th>
-            <th style="width:10%"></th>
+            <th>Product</th>
+            <th>Image</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
-        @php $total = 0 @endphp
-        @if(session('cart'))
-            @foreach(session('cart') as $id => $details)
-                @php $total += $details['price'] * $details['quantity'] @endphp
-                <tr data-id="{{ $id }}">
-                    <td data-th="Product">
-                        <div class="row">
-                            <div class="col-sm-3 hidden-xs"><img src="{{ asset('assets/images/product-1'.$details['photo'] ) }}" width="100" height="100" class="img-responsive"/></div>
-                            <div class="col-sm-9">
-                                <h4 class="nomargin">{{ isset($details['name'])? $details['name'] : '' }}</h4>
-                            </div>
-                        </div>
-                    </td>
-                    <td data-th="Price">${{ $details['price'] }}</td>
-                    <td data-th="Quantity">
-                        <input type="number" value="{{ $details['quantity'] }}" class="form-control quantity cart_update" min="1" />
-                    </td>
-                    <td data-th="Subtotal" class="text-center">${{ $details['price'] * $details['quantity'] }}</td>
-                    <td class="actions" data-th="">
-                        <form action="{{ route('remove_from_cart', ['id' => $id]) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm cart_remove"><i class="fa fa-trash-o"></i> Delete</button>
-                        </form>
-                    </td>
+        @php $total = 0; @endphp
+        @foreach($cartItems as $item)
+            <tr>
+                <td>{{ $item->name }}</td>
+                <td>
+                    @if ($item->images)
+                        {{-- If images are stored as a JSON array --}}
+                        @php
+                            $images = json_decode($item->images, true);
+                        @endphp
+                        @if (is_array($images) && count($images) > 0)
+                            <img src="{{ asset($images[0]) }}" alt="Product Image" width="100">
+                        @endif
+                    @endif
+                </td>
 
-                </tr>
-            @endforeach
-        @endif
+                <td>${{ $item->price }}</td>
+                <td>{{ $item->pivot->quantity }}</td>
+                <td>${{ $item->price * $item->pivot->quantity }}</td>
+                <td>
+                    <form action="{{ route('remove_from_cart', ['id' => $item->id]) }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+            @php $total += $item->price * $item->pivot->quantity; @endphp
+        @endforeach
     </tbody>
-    <tfoot>
-        <tr>
-            <td colspan="5" style="text-align:right;"><h3><strong>Total ${{ $total }}</strong></h3></td>
-        </tr>
-        <tr>
-            <td colspan="5" style="text-align:right;">
-                <form action="/session" method="POST">
-                <a href="{{ url('/') }}" class="btn btn-danger"> <i class="fa fa-arrow-left"></i> Continue Shopping</a>
-                <input type="hidden" name="_token" value="{{csrf_token()}}">
-                <a href="{{ route('checkout') }}" class="btn btn-success"> <i class="fa fa-arrow-left"></i> Checkout</a>
-            </form>
-            </td>
-        </tr>
-    </tfoot>
 </table>
+
+<div class="text-right">
+    <h4>Total: ${{ $total }}</h4>
+</div>
+
+<div class="text-right">
+    <a href="{{ route('checkout') }}" class="btn btn-success">Proceed to Checkout</a>
+</div>
+@endif
 
 
 

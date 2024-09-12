@@ -10,9 +10,17 @@ class CategoryService
 {
     public function all()
     {
+        // Start building the categories query
+        $categories = Category::with('subcategories')->orderByDesc('id');
 
+        // Apply search filter if 'search' is filled
+        $categories->when(request()->filled('search'), function ($query) {
+            $search = request()->search;
+            $query->where('name', 'LIKE', '%' . $search . '%');
+        });
 
-        $categories = Category::with('subcategories')->orderByDesc('id')->paginate(5);
+        // Finalize the query with pagination
+        $categories = $categories->paginate(5);
 
         return $categories;
     }

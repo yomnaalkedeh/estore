@@ -22,7 +22,7 @@ class StoreOptionValueRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'value' => ['required'],
+            'value' => ['required', 'array'],
             'option_id' => ['required'],
         ];
     }

@@ -11,7 +11,7 @@ class Option extends Model
 {
     use HasFactory;
     protected $fillable = ['name'];
-    public function optionvalues()
+    public function optionValues()
     {
         return $this->hasMany(OptionValue::class);
     }

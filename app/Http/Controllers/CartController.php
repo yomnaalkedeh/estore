@@ -7,67 +7,79 @@ use Illuminate\Http\Request;
 use App\Models\Admin\Product;
 use App\Models\Admin\Location;
 use Illuminate\Support\Facades\Auth;
+use App\Models\CartProduct;
 
 class CartController extends Controller
 {
 
     public function cart()
     {
-     $product=Product::get();
-        return view('Web.Pages.cart',compact('product'));
+         // Check if the user is authenticated
+            if (!Auth::check()) {
+                return redirect()->route('auth.login')->with('error', 'You need to be logged in to view your cart.');
+            }
+
+            // Get the authenticated user's cart
+            $cart = Cart::where('user_id', Auth::id())->with('products')->first();
+
+            // If the cart is empty or doesn't exist, pass an empty array
+            $cartItems = $cart ? $cart->products : [];
+                $product=Product::get();
+                    return view('Web.Pages.cart',compact('product','cartItems'));
     }
-    public function addToCart(Request $request,$id)
+
+
+
+    public function addToCart(Request $request, $productId)
     {
-
-        $product = Product::find($id);
-
-        if(!$product) {
-            abort(404);
+        // Ensure the user is authenticated
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')->with('error', 'You need to be logged in to add items to the cart.');
         }
 
-        $cart = session()->get('cart');
-
-
-        if(!$cart) {
-            $cart[$id] = [
-                "name" => $product->name,
-                "photo" => $product->photo,
-                "price" => $product->price,
-                "quantity" => 1
-            ];
-
-            session()->put('cart', $cart);
-            return redirect()->back()->with('success', 'Product added to cart successfully!');
+        // Find the product by ID
+        $product = Product::find($productId);
+        if (!$product) {
+            return redirect()->back()->with('error', 'Product not found.');
         }
 
-        if(isset($cart[$id])) {
-            $cart[$id]['quantity']++;
-            session()->put('cart', $cart);
-            return redirect()->back()->with('success', 'Product added to cart successfully!');
+        // Get the quantity from the request, default is 1
+        $quantity = $request->input('quantity', 1);
+
+        // Get or create the cart for the authenticated user
+        $cart = Cart::firstOrCreate(['user_id' => Auth::id()]);
+
+        // Check if the product is already in the cart
+        $existingProduct = $cart->products()->where('product_id', $productId)->first();
+
+        if ($existingProduct) {
+            // If product exists in the cart, update the quantity
+            $cart->products()->updateExistingPivot($productId, [
+                'quantity' => $existingProduct->pivot->quantity + $quantity
+            ]);
+        } else {
+            // Attach the new product to the cart with the quantity
+            $cart->products()->attach($productId, ['quantity' => $quantity]);
         }
 
-        $cart[$id] = [
-            "name" => $product->name,
-            "quantity" => 1,
-            "price" => $product->price,
-            "photo" => $product->photo
-        ];
-
-        session()->put('cart', $cart);
         return redirect()->back()->with('success', 'Product added to cart successfully!');
     }
-    public function remove(Request $request)
+
+
+
+    public function remove($id)
     {
-        if($request->id) {
-            $cart = session()->get('cart');
-            if(isset($cart[$request->id])) {
-                unset($cart[$request->id]);
-                session()->put('cart', $cart);
-            }
-            session()->flash('success', 'Product successfully removed!');
+
+        $cart = Cart::where('user_id', Auth::id())->first();
+
+        if ($cart) {
+            $cart->products()->detach($id);  // Assuming products are in a many-to-many relationship
         }
-        return view('Web.Pages.cart');
+
+        return redirect()->back()->with('success', 'Product removed from cart successfully!');
     }
+
+
     public function update(Request $request)
     {
         if($request->id && $request->quantity){
@@ -80,12 +92,46 @@ class CartController extends Controller
 
     public function checkout(){
 
+        if (!Auth::check()) {
+            return redirect()->route('auth.login')->with('error', 'You need to be logged in to view your cart.');
+        }
+        $cart = Cart::where('user_id', auth()->id())->first();
 
-        $locations=Location::get();
+        // Retrieve cart products with the associated product details
+        $cartProducts = CartProduct::where('cart_id', $cart->id)
+                                   ->with('product')  // Load associated product
+                                   ->get();
 
-        return view('Web.Pages.checkout',compact('locations'));
+        // Calculate the subtotal
+        $total = $cartProducts->sum(function ($cartProduct) {
+            return $cartProduct->product->price * $cartProduct->quantity;
+        });
+
+        return view('Web.Pages.checkout', compact('cartProducts', 'total'));
+
+
 
 
     }
+
+    public function showCart()
+{
+    // Assuming you have a Cart and CartProduct model
+    $cart = cart::where('user_id', auth()->id())->first();  // Get the cart for the logged-in user
+    $cartProducts = CartProduct::where('cart_id', $cart->id)
+                               ->with('product')  // Eager load the associated product
+                               ->get();
+                               $cartProducts = CartProduct::where('cart_id', $cart->id)
+                               ->with(['product.optionValues'])  // Load product and its option values
+                               ->get();
+
+    // Calculate the subtotal
+    $subtotal = $cartProducts->sum(function ($cartProduct) {
+        return $cartProduct->product->price * $cartProduct->quantity;
+    });
+
+    return view('Web.Pages.cart', compact('cartProducts', 'subtotal'));
+}
+
 }
 

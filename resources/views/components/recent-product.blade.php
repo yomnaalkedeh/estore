@@ -2,26 +2,40 @@
     <div class="product-style-7 mt-30">
         <div class="product-image">
             <div class="product-active">
-                <div class="product-item active">
-                    <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                </div>
-                <div class="product-item">
-                    <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                </div>
+                @if (!empty($product->images))
+                @php
+                    $images = json_decode($product->images, true); // Decode JSON to array
+                @endphp
+
+                @foreach ($images as $image)
+                    <img src="{{ asset($image) }}" alt="Product Image" width="100">
+                @endforeach
+
+            @else
+                <p>No images available.</p>
+            @endif
+
+
             </div>
         </div>
         <div class="product-content">
             <ul class="product-meta">
                 <li>
                     @if(auth()->check() && auth()->user()->favorites->contains('favoritable_id', $product->id))
-                    <p>This product is in your favorites.</p>
-                @else
-                    <form action="{{ route('add-to-favorites', $product->id) }}" method="post">
-                        @csrf
-                        <button type="submit">   {{ __("profile.Add to Favorites") }}</button>
-                    </form>
-                @endif
+                        <p>This product is in your favorites.</p>
+                    @else
+                        <form action="{{ route('add-to-favorites', $product->id) }}" method="post" id="favorite-form-{{ $product->id }}" style="display: none;">
+                            @csrf
+                        </form>
+
+                        <a class="add-wishlist" href="javascript:void(0)" onclick="event.preventDefault(); document.getElementById('favorite-form-{{ $product->id }}').submit();">
+                            <i class="mdi mdi-heart-outline"></i>
+                            {{ __("Add to Favorite") }}
+                        </a>
+                    @endif
                 </li>
+
+
                 <li>
                     <span><i class="mdi mdi-star"></i> 4.5/5</span>
                 </li>

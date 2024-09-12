@@ -10,12 +10,13 @@ class cart extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'product_id',
-        'quantity',
+        'user_id'
     ];
 
-    public function product()
+    public function products()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(Product::class, 'cart_product')
+                    ->withPivot('quantity')
+                    ->withTimestamps(); // Optional, if you want to track when items were added
     }
 }

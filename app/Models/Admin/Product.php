@@ -2,6 +2,7 @@
 
 namespace App\Models\Admin;
 
+use App\Models\cart;
 use App\Models\Rate;
 use App\Models\Image;
 use App\Models\Option;
@@ -19,7 +20,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Product extends Model implements HasMedia
 {
-    protected $fillable=['name','desc','image', 'category_id','price'];
+    protected $fillable=['name','desc','images', 'category_id','price'];
+        protected $casts = [
+        'images' => 'array', // Ensure it is cast to array when retrieved
+    ];
     use HasFactory;
     use InteractsWithMedia;
 
@@ -46,13 +50,19 @@ class Product extends Model implements HasMedia
     {
         return $this->morphMany(Location::class, 'locationable');
     }
+    public function carts()
+    {
+        return $this->belongsToMany(cart::class)
+                    ->withPivot('quantity')
+                    ->withTimestamps(); // Optional, if you want to track when items were added
+    }
 
     public function options()
     {
         return $this->belongsToMany(Option::class,'option_product');
     }
 
-    public function option_values()
+    public function optionValues()
     {
         return $this->belongsToMany(OptionValue::class,'option_value_product');
     }

@@ -42,10 +42,17 @@ class OptionValueController extends Controller
     {
         $data = $request->validated();
 
-        $this->optionvalueService->store($data);
+        // Loop through each value and store it as a separate option value
+        foreach ($data['value'] as $value) {
+            $this->optionvalueService->store([
+                'option_id' => $data['option_id'],
+                'value' => $value,
+            ]);
+        }
 
-       return redirect()->route('optionvalues.index');
+        return redirect()->route('optionvalues.index')->with('success', 'Option values added successfully.');
     }
+
 
     /**
      * Display the specified resource.

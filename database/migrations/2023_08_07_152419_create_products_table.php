@@ -22,7 +22,7 @@ return new class extends Migration
           //  $table->foreignIdFor(Admin::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
          //   $table->foreignIdFor(Vendor::class)->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->double('price');
-            $table->string('image');
+            $table->text('images');
             $table->timestamps();
         });
     }

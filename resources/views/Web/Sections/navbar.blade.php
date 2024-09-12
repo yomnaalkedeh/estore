@@ -116,11 +116,17 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="search-input">
-                            <input type="text" name="search" placeholder="Search" value="">
-                        </div>
-                        <div class="search-btn">
-                            <button type="submit"><i class="lni lni-search-alt"></i></button>
+                        <div class="card-tools">
+                            <div class="input-group input-group" style="width: 250px;">
+                                <input type="search" name="search" class="form-control float-right" placeholder="Search">
+
+                                <div class="input-group-append">
+                                  <button type="submit" class="btn btn-default">
+                                    <i class="fas fa-search"></i>
+                                  </button>
+                                </div>
+                              </div>
+
                         </div>
                     </div>
                     <!-- navbar search Ends -->
@@ -196,7 +202,7 @@
                         <nav class="main-navbar d-lg-flex justify-content-between align-items-center">
                             <!-- desktop logo Start -->
                             <div class="{{asset('desktop-logo d-none d-lg-block') }}">
-                                <a href="index.html"><img src="{{asset('assets/images/logo.svg')}}" alt="Logo"></a>
+                                <a href={{ route('profile') }}><img src="{{asset('assets/images/logo.svg')}}" alt="Logo"></a>
                             </div>
                             <!-- desktop logo Ends -->
                             <!-- navbar menu Start -->
@@ -228,16 +234,7 @@
                                                             </ul>
                                                             @endforeach
                                                         </li>
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.accessories") }}
-                                                            </h6>
-                                                            @foreach (App\Models\Admin\Category::orderByDesc('id')->paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
 
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
                                                         <li class="mega-dropdown-list">
                                                             <img src="{{asset('assets/images/menu-slider-1.png')}}" alt="">
                                                         </li>
@@ -273,16 +270,7 @@
                                                             </ul>
                                                             @endforeach
                                                         </li>
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.accessories") }}
-                                                            </h6>
-                                                            @foreach (App\Models\Admin\Category::orderByDesc('id')->paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
 
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
                                                         <li class="mega-dropdown-list">
                                                             <img src="{{asset('assets/images/menu-slider-1.png')}}" alt="">
                                                         </li>
@@ -318,16 +306,7 @@
                                                             </ul>
                                                             @endforeach
                                                         </li>
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.accessories") }}
-                                                            </h6>
-                                                            @foreach (App\Models\Admin\Category::orderByDesc('id')->paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
 
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
                                                         <li class="mega-dropdown-list">
                                                             <img src="{{asset('assets/images/menu-slider-1.png')}}" alt="">
                                                         </li>
@@ -337,68 +316,8 @@
                                         </ul>
                                         <!-- sub mega dropdown Ends -->
                                     </li>
-                                    <li class="position-static menu-item-has-children">
-                                        <a href="#">{{ __("profile.accessories") }}</a>
-                                        <!-- sub mega dropdown Start -->
-                                        <ul class="sub-mega-dropdown">
-                                            <li>
-                                                <div class="mega-dropdown-menu">
-                                                    <ul class="container mega-dropdown d-flex flex-wrap">
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.new") }}
-                                                            </h6>
-                                                            @foreach (App\Models\Admin\Category::paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
 
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.trending") }}</h6>
-                                                            @foreach (App\Models\Admin\Category::paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
 
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
-                                                        <li class="mega-dropdown-list menu-item-has-children">
-                                                            <h6 class="heading-6 font-weight-500 mega-title">{{ __("profile.accessories") }}
-                                                            </h6>
-
-                                                            @foreach (App\Models\Admin\Category::orderByDesc('id')->paginate(5) as $category)
-                                                            <ul>
-                                                                <li><a href="{{ route('filterByCategory',$category->id)  }}">{{ $category->name }}</a></li>
-
-                                                            </ul>
-                                                            @endforeach
-                                                        </li>
-                                                        <li class="mega-dropdown-list">
-                                                            <img src="{{asset('assets/images/menu-slider-1.png')}}" alt="">
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                        <!-- sub mega dropdown Ends -->
-                                    </li>
-                                    <li class="menu-item-has-children">
-                                        <a href="#">{{ __("profile.pages") }}</a>
-                                        <!-- sub menu Start -->
-                                        <ul class="sub-menu">
-                                            <li><a href="about-page.html">{{ __("profile.about page") }} </a></li>
-                                            <li><a href="account-page.html">{{ __("profile.account page") }} </a></li>
-                                            <li><a href="cart-page.html">{{ __("profile.cart page") }} </a></li>
-                                            <li><a href="category.html"> {{ __("profile.category page") }}</a></li>
-                                            <li><a href="checkout-page.html"> {{ __("profile.checkout page") }}</a></li>
-                                            <li><a href="contact-page.html">{{ __("profile.contact page") }} </a></li>
-                                            <li><a href="login-page.html">{{ __("profile.login page") }}  </a></li>
-                                            <li><a href="product-details-page.html">{{ __("profile.details page") }}</a></li>
-                                            <li><a href="signup-page.html">{{ __("profile.sign up page") }}</a></li>
-                                        </ul>
-                                        <!-- sub menu Ends -->
-                                    </li>
                                 </ul>
                             </div>
                             <!-- navbar menu Ends -->
@@ -412,101 +331,95 @@
                                     </select>
                                 </div>
                                 <form action="{{ route('search') }}" method="GET" class="search-input">
-                                    <input type="text" name="search" placeholder="Search"  value="">
-                                    <button type="submit"><i class="lni lni-search-alt"></i></button>
+                                    <div class="card-tools">
+                                        <div class="input-group input-group" style="width: 250px;">
+                                            <input type="search" name="search" class="form-control float-right" placeholder="Search">
 
+                                            <div class="input-group-append">
+                                              <button type="submit" class="btn btn-default">
+                                                <i class="fas fa-search"></i>
+                                              </button>
+                                            </div>
+                                          </div>
+
+                                    </div>
                                 </form>
 
                             </div>
 
                                 <!-- navbar search Ends -->
-                                <!-- navbar cart start -->
-                                <div class="navbar-cart">
-                                    <a class="{{asset('icon-btn primary-icon-text icon-text-btn')}}" href="javascript:void(0)">
-                                        <img src="{{asset('assets/images/icon-svg/cart-1.svg')}}" alt="Icon">
-                                        <span class="icon-text text-style-1">{{ count((array) session('cart')) }}</span>
-                                    </a>
+<!-- navbar cart start -->
+<div class="navbar-cart">
+    <a class="icon-btn primary-icon-text icon-text-btn" href="javascript:void(0)">
+        <img src="{{ asset('assets/images/icon-svg/cart-1.svg') }}" alt="Icon">
+        <span class="icon-text text-style-1">{{ $cartProducts->count() }}</span>
+    </a>
 
-                                    <div class="navbar-cart-dropdown">
-                                        <div class="checkout-style-2">
-                                            @php $total = 0 @endphp
-                                            @foreach((array) session('cart') as $id => $details)
-                                                @php $total += $details['price'] * $details['quantity'] @endphp
-                                                @endforeach
-                                            <div class="checkout-header d-flex justify-content-between">
-                                                <h6 class="title">{{ __("profile.shopping cart") }} </h6>
-                                            </div>
+    <div class="navbar-cart-dropdown">
+        <div class="checkout-style-2">
+            <div class="checkout-header d-flex justify-content-between">
+                <h6 class="title">Shopping Cart</h6>
+            </div>
 
-                                            <div class="checkout-table">
-                                                <table class="table">
-                                                    <tbody>
-                                                        @if(session('cart'))
-                                                        @foreach(session('cart') as $id => $details)
-                                                        <tr>
-                                                            <td class="checkout-product">
-                                                                <div class="product-cart d-flex">
-                                                                    <div class="product-thumb">
-                                                                        <img src="{{asset('assets/images/product-cart/product-1.png')}}"
-                                                                            alt="Product">
-                                                                    </div>
-                                                                    <div class="product-content media-body">
-                                                                        <h5 class="title">
-                                                                            <a href="product-details-page.html">{{ isset($details['name'])? $details['name'] : '' }}</a>
-                                                                        </h5>
-                                                                        <ul>
+            <div class="checkout-table table-responsive">
+                <table class="table">
+                    <tbody>
+                        @foreach($cartProducts as $cartProduct)
+                            <tr>
+                                <td class="checkout-product">
+                                    <div class="product-cart d-flex">
+                                        <div class="product-thumb">
+                                            @php
+                                            $images = json_decode($cartProduct->product->images);
+                                        @endphp
+
+                                        @if(!empty($images) && is_array($images))
+                                            <img src="{{ asset($images[0]) }}" alt="Product" style="width: 60px">
+                                        @endif
 
 
-                                                                            <li>
-                                                                                <form action="{{ route('remove_from_cart', ['id' => $id]) }}" method="POST">
-                                                                                    @csrf
-                                                                                    @method('DELETE')
-                                                                                    <button type="submit" class="delete-button">
-                                                                                        <i class="mdi mdi-delete"></i>
-                                                                                        <span class="sr-only">{{ __("profile.remove") }}</span>
-                                                                                    </button>
-                                                                                </form>
-                                                                            </li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                            </td>
-                                                            <td class="checkout-quantity">
-                                                                <div class="product-quantity d-inline-flex">
-                                                                    <button type="button" id="sub" class="sub">
-                                                                        <i class="mdi mdi-minus"></i>
-                                                                    </button>
-                                                                    <input type="text" value={{ $details['quantity'] }}>
-                                                                    <button type="button" id="add" class="add">
-                                                                        <i class="mdi mdi-plus"></i>
-                                                                    </button>
-                                                                </div>
-                                                            </td>
-                                                            <td class="checkout-price">
-                                                                <p class="price">${{ $details['price'] }}</p>
-                                                            </td>
-                                                        </tr>
+                                                                                </div>
 
-                                                        @endforeach
-                                                        @endif
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                        <div class="product-content media-body">
+                                            <h5 class="title">
+                                                <a href="{{ route('productDetail', $cartProduct->product->id) }}">
+                                                    {{ $cartProduct->product->name }}
+                                                </a>
+                                            </h5>
+                                            <ul>
+                                                <li><span>{{ $cartProduct->product->color }}</span></li>
+                                                <li><span>{{ $cartProduct->product->size }}</span></li>
 
-                                            <div class="checkout-footer">
-                                                <div class="checkout-sub-total d-flex justify-content-between">
-                                                    <p class="value">Subtotal Price:</p>
-                                                    <p class="price">${{ $total }}</p>
-                                                </div>
-                                                <div class="checkout-btn">
-                                                    <a href="{{ route('cart') }}" class="main-btn primary-btn-border">
-                                                        {{ __("profile.view cart") }}</a>
-                                                    <a href="{{ route('checkout') }}" class="main-btn primary-btn">{{ __("profile.checkout see") }}</a>
-                                                </div>
-                                            </div>
+
+                                            </ul>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- navbar cart Ends -->
+                                </td>
+
+                                <td class="checkout-price">
+                                    <p class="price" style="margin-left: 130px">${{ $cartProduct->product->price * $cartProduct->quantity }}</p>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="checkout-footer">
+                <div class="checkout-sub-total d-flex justify-content-between">
+                    <p class="value">Subtotal Price:</p>
+                    <p class="price">${{ $subtotal }}</p>
+                </div>
+                <div class="checkout-btn">
+                    <a href="{{ route('cart') }}" class="main-btn primary-btn-border">View Cart</a>
+                    <a href="{{ route('checkout') }}" class="main-btn primary-btn">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- navbar cart Ends -->
+
                             </div>
                         </nav>
                     </div>

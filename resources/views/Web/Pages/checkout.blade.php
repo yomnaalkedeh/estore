@@ -109,35 +109,43 @@
                         <h2>Order Summery</h3>
                     </div>
                     @php $total = 0 @endphp
-                    @if(session('cart'))
-                        @foreach(session('cart') as $id => $details)
-                            @php $total += $details['price'] * $details['quantity'] @endphp
-                    <div class="card cart-summery">
-                        <div class="card-body">
 
-                            <div class="d-flex justify-content-between pb-2">
-                                <div class="h6">{{ isset($details['name'])? $details['name'] : '' }}  X "{{ $details['quantity'] }}" </div>
-                                <div class="h6">${{ $details['price'] }}</div>
-                            </div>
+                    @if($cartProducts->count() > 0)
+                        @foreach($cartProducts as $cartProduct)
+                            @php
+                                $itemTotal = $cartProduct->product->price * $cartProduct->quantity;
+                                $total += $itemTotal;
+                            @endphp
+                            <div class="card cart-summery">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between pb-2">
+                                        <div class="h6">
+                                            {{ $cartProduct->product->name }} X "{{ $cartProduct->quantity }}"
+                                        </div>
+                                        <div class="h6">${{ $cartProduct->product->price }}</div>
+                                    </div>
 
-                            <div class="d-flex justify-content-between summery-end">
-                                <div class="h6"><strong>Subtotal</strong></div>
-                                <div class="h6"><strong>${{ $details['price'] * $details['quantity'] }}</strong></div>
-                            </div>
+                                    <div class="d-flex justify-content-between summery-end">
+                                        <div class="h6"><strong>Subtotal</strong></div>
+                                        <div class="h6"><strong>${{ $itemTotal }}</strong></div>
+                                    </div>
 
-                            <div class="d-flex justify-content-between mt-2">
-                                <div class="h6"><strong>Shipping</strong></div>
-                                <div class="h6"><strong>$0</strong></div>
+                                    <div class="d-flex justify-content-between mt-2">
+                                        <div class="h6"><strong>Shipping</strong></div>
+                                        <div class="h6"><strong>$0</strong></div>
+                                    </div>
+                                </div>
                             </div>
-                            @endforeach
-                            <div class="d-flex justify-content-between mt-2 summery-end">
-                                <div class="h5"><strong>Total</strong></div>
-                                <div class="h5"><strong>${{ $total }}</strong></div>
-                            </div>
+                        @endforeach
+
+                        <div class="d-flex justify-content-between mt-2 summery-end">
+                            <div class="h5"><strong>Total</strong></div>
+                            <div class="h5"><strong>${{ $total }}</strong></div>
                         </div>
-                    </div>
-
+                    @else
+                        <p>Your cart is empty.</p>
                     @endif
+
 
                     <div class="card payment-form ">
                         <h3 class="card-title h5 mb-3 d-none">Payment Details</h3>

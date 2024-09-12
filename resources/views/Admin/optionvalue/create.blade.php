@@ -24,7 +24,7 @@
                                                     <div class="col-md-6">
                                                         <div class="mb-3">
                                                             <label for="value">Value</label>
-                                                            <input type="text" name="value" id="value" class="form-control" placeholder="value">
+                                                            <input type="text" name="value[]" id="value" class="form-control" placeholder="value">
                                                         </div>
                                                     </div>
 
@@ -73,9 +73,16 @@
                     <!-- /.content -->
 
     @endsection
-                <script>
-
-                </script>
+    <script>
+        // JavaScript to dynamically add more option values
+        document.getElementById('add-value').addEventListener('click', function () {
+            let input = document.createElement('input');
+            input.type = 'text';
+            input.name = 'value[]';
+            input.placeholder = 'Enter another value';
+            document.getElementById('value').appendChild(input);
+        });
+    </script>
 
 
 

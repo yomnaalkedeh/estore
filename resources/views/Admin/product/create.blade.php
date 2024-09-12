@@ -10,7 +10,7 @@
 
 
                                             <!-- Main content -->
-                                            <section class="content">
+
                                                 <!-- Default box -->
                                                 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                                                     @csrf
@@ -19,8 +19,8 @@
                                                         <div class="col-md-8">
                                                             <div class="card mb-3">
                                                                 <div class="card-body">
-                                                                    <div class="row">
-                                                                        <div class="row">
+
+
                                                                             <div class="col-md-6">
                                                                                 <div class="mb-3">
                                                                                     <label for="name">Name</label>
@@ -28,7 +28,7 @@
                                                                                 </div>
                                                                             </div>
 
-                                                                        </div>
+
                                                                         <div class="col-md-6">
                                                                             <div class="mb-3">
                                                                                 <label for="description">Description</label>
@@ -36,36 +36,50 @@
                                                                             </div>
                                                                         </div>
                                                                         <div class="col-md-6">
+
                                                                             <div class="mb-3">
-                                                                                <label for="image">Img</label>
-                                                                                <input type="file" name="image" id="image" class="form-control" >
+                                                                                <label for="images">Images</label>
+                                                                                <input type="file" name="images[]" id="images" class="form-control" multiple>
                                                                             </div>
                                                                         </div>
+
+                                                                        {{-- <h2 class="h4 mb-3">Product Options</h2>
                                                                         <div class="mb-3">
-                                                                            <label for="option">Option</label>
-                                                                            <select name="option_id" id="option" class="form-control">
-
-                                                                            @if (App\Models\Option::get()->isNotEmpty())
-                                                                            @foreach (App\Models\Option::get() as $option )
-                                                                            <option value="{{ $option->id }}">{{ $option->name }}</option>
-                                                                            @endforeach
-
-                                                                            @endif
+                                                                            <label for="options" class="form-label">Select Options:</label>
+                                                                            <select name="option_ids[]" id="options" class="form-control" multiple>
+                                                                                @foreach (App\Models\Option::all() as $option)
+                                                                                    <option value="{{ $option->id }}">{{ $option->name }}</option>
+                                                                                @endforeach
                                                                             </select>
-                                                                        </div>
-                                                                        <div class="mb-3">
-                                                                            <label for="optionvalue">Option Vlaue</label>
-                                                                            <select name="optionvalue_id" id="optionvalue" class="form-control">
+                                                                        </div> --}}
 
-                                                                            @if (App\Models\OptionValue::get()->isNotEmpty())
-                                                                            @foreach (App\Models\OptionValue::get() as $optionvalue )
-                                                                            <option value="{{ $optionvalue->id }}">{{ $optionvalue->value }}</option>
-                                                                            @endforeach
 
-                                                                            @endif
-                                                                            </select>
-                                                                        </div>
+                                                                    <!-- Option Values -->
+                                                                    <div class="mb-3">
+                                                                        <label for="option_values" class="form-label">Select Option Values:</label>
+                                                                        @foreach (App\Models\Option::all() as $option)
+                                                                            <div class="mb-4">
+                                                                                <h5 class="mb-2">{{ $option->name }}</h5>
+                                                                                <div class="row">
+                                                                                    @foreach ($option->optionValues as $optionValue)
+                                                                                        <div class="col-md-4 col-sm-6">
+                                                                                            <div class="form-check">
+                                                                                                <input class="form-check-input" type="checkbox" name="option_values[{{ $option->id }}][]"
+                                                                                                    id="option_value_{{ $optionValue->id }}" value="{{ $optionValue->id }}">
+                                                                                                <label class="form-check-label" for="option_value_{{ $optionValue->id }}">
+                                                                                                    {{ $optionValue->value }}
+                                                                                                </label>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                </div>
+                                                                            </div>
+                                                                        @endforeach
                                                                     </div>
+
+
+
+
                                                                 </div>
                                                             </div>
 
@@ -89,7 +103,7 @@
 
                                                                 </div>
 
-                                                            <div class="card mb-3">
+
                                                                 <div class="card-body">
                                                                     <h2 class="h4 mb-3">Pricing</h2>
                                                                     <div class="row">
@@ -109,7 +123,7 @@
 
 
 
-                                                        </div>
+
                                                     </div>
 
                                                     <div class="pb-5 pt-3">
@@ -118,17 +132,10 @@
                                                     </div>
                                                 </div>
                                                 <!-- /.card -->
-                                            </section>
+
                                             <!-- /.content -->
 
                             @endsection
-                                        <script>
 
-                                        </script>
-
-
-
-                                                @section('customJs')
-                                                @endsection
 
 

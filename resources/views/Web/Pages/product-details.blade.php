@@ -38,22 +38,45 @@
                         <div class="product-details-image mt-50">
                             <div class="product-image">
                                 <div class="product-image-active-1">
-                                    <div class="single-image">
-                                        <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                                    </div>
+                                    @if (!empty($product->images))
+                                        @php
+                                            $images = json_decode($product->images, true); // Decode JSON to array
+                                        @endphp
 
+                                        @foreach ($images as $image)
+                                            <div class="single-image">
+                                                <img src="{{ asset($image) }}" alt="Product Image">
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p>No images available.</p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="product-thumb-image">
-                                <div class="product-thumb-image-active-1">
-                                    <div class="single-thumb">
-                                        <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                                    </div>
 
+                            <div class="col-lg-6">
+                                <div class="product-details-image mt-50">
+
+                                    <div class="product-thumb-image">
+                                        <div class="product-thumb-image-active-1">
+                                            @if (!empty($product->images))
+                                                @foreach ($images as $image)
+                                                    <div class="single-thumb">
+                                                        <img src="{{ asset($image) }}" alt="Product Thumbnail">
+                                                    </div>
+                                                @endforeach
+                                            @else
+                                                <p>No thumbnails available.</p>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
+
+
                     <div class="col-lg-6">
                         <div class="product-details-content mt-45">
 
@@ -66,46 +89,68 @@
 
                                 <h6 class="item-title">Select Your {{ $product->name }}: </h6>
 
-                                <div class="items-wrapper">
-                                    @foreach ($product->option_values as $optionValue)
-                                            <div class="single-item active">
-                                                <div class="items-image">
-                                                 <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                                                </div>
-                                                <p class="text">{{ $optionValue->value }}</p>
-                                            </div>
-                                     @endforeach
 
+                                <div class="product-select-wrapper flex-wrap">
+                                    <!-- Color Selection -->
+                                    <div class="select-item">
+                                        <h6 class="select-title">Select Color: <span id="selected-color"></span></h6>
+                                        <ul class="color-select">
+                                            @if($product->optionValues->isNotEmpty())
+                                                @foreach($product->optionValues as $optionValue)
+                                                    @if($optionValue->option->name === 'Color') <!-- Filter color options -->
+                                                        <li
+                                                            class="color-option {{ $loop->first ? 'active' : '' }}"
+                                                            data-color="{{ $optionValue->value }}"
+                                                            title=" {{ $optionValue->value }}"
+                                                            style="background-color: {{ $optionValue->value }};">
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <p>No colors available for this product.</p>
+                                            @endif
+                                        </ul>
+                                    </div>
+
+                                    <!-- Size Selection -->
+                                    <div class="select-item">
+                                        <h6 class="select-title">Select Size: <span id="selected-size"></span></h6>
+                                        <ul class="size-select">
+                                            @if($product->optionValues->isNotEmpty())
+                                                @foreach($product->optionValues as $optionValue)
+                                                    @if($optionValue->option->name === 'Size') <!-- Filter size options -->
+                                                        <li
+                                                            class="size-option {{ $loop->first ? 'active' : '' }}"
+                                                            data-size="{{ $optionValue->value }}"
+                                                            title=" {{ $optionValue->value }}">
+                                                            {{ $optionValue->value }}
+                                                        </li>
+                                                    @endif
+                                                @endforeach
+                                            @else
+                                                <p>No sizes available for this product.</p>
+                                            @endif
+                                        </ul>
+                                    </div>
                                 </div>
 
 
                             </div>
 
+
+
+
+
+
                             <div class="product-select-wrapper flex-wrap">
-                                <div class="select-item">
-                                    <h6 class="select-title">Select Color: <span>Grey</span></h6>
-                                    <ul class="color-select">
-                                        <li class="active" data-color="#EFEFEF"></li>
-                                        <li data-color="#FAE5EC"></li>
-                                        <li data-color="#4C4C4C"></li>
-                                    </ul>
-                                </div>
-                                <div class="select-item">
-                                    <h6 class="select-title">Memory (GB): </h6>
-                                    <div class="size-select">
-                                        <select>
-                                            <option value="">32gb</option>
-                                            <option value="">64gb</option>
-                                            <option value="">128 gb</option>
-                                        </select>
-                                    </div>
-                                </div>
+
+
                                 <div class="select-item">
                                     <h6 class="select-title">Select Quantity: </h6>
 
                                     <div class="select-quantity">
                                         <button type="button" id="sub" class="sub"><i class="mdi mdi-minus"></i></button>
-                                        <input type="text" value="1" />
+                                        <input type="text" id="quantity-input" value="1" readonly />
                                         <button type="button" id="add" class="add"><i class="mdi mdi-plus"></i></button>
                                     </div>
                                 </div>
@@ -483,12 +528,104 @@
 
     @endsection
     <title>My App</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            $('#stars li').on('click', function() {
-                var rating = $(this).data('value');
-                $('#rating').val(rating);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle Color Selection
+            const colorOptions = document.querySelectorAll('.color-option');
+            const selectedColorSpan = document.getElementById('selected-color');
+
+            colorOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    colorOptions.forEach(opt => opt.classList.remove('active'));
+
+                    // Add active class to the clicked option
+                    this.classList.add('active');
+
+                    // Update selected color display
+                    selectedColorSpan.textContent = this.title;
+                    selectedColorSpan.style.color = this.getAttribute('data-color');
+                });
+            });
+
+            // Handle Size Selection
+            const sizeOptions = document.querySelectorAll('.size-option');
+            const selectedSizeSpan = document.getElementById('selected-size');
+
+            sizeOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // Remove active class from all options
+                    sizeOptions.forEach(opt => opt.classList.remove('active'));
+
+                    // Add active class to the clicked option
+                    this.classList.add('active');
+
+                    // Update selected size display
+                    selectedSizeSpan.textContent = this.title;
+                });
             });
         });
-    </script>
+
+//         <script>
+// document.addEventListener('DOMContentLoaded', function() {
+//     const quantityInput = document.getElementById('quantity-input');
+//     const addButton = document.getElementById('add');
+//     const subButton = document.getElementById('sub');
+//     const minQuantity = 1; // Minimum quantity allowed
+//     const maxQuantity = 100; // Maximum quantity, adjust as needed
+
+//     // Default quantity value
+//     let quantity = parseInt(quantityInput.value, 10);
+
+//     // Function to update the quantity
+//     function updateQuantity(newQuantity) {
+//         // Ensure quantity is within bounds
+//         if (newQuantity >= minQuantity && newQuantity <= maxQuantity) {
+//             quantity = newQuantity;
+//             quantityInput.value = quantity;
+
+//             // Example: Update total price (assuming price per item is $10)
+//             // Update this based on your pricing logic
+//             const pricePerItem = 10;
+//             const totalPrice = quantity * pricePerItem;
+//             document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+
+//             // You can also make an AJAX request to update the quantity on the server
+//             // Example: sendQuantityToServer(quantity);
+//         }
+//     }
+
+//     addButton.addEventListener('click', function() {
+//         updateQuantity(quantity + 1);
+//     });
+
+//     subButton.addEventListener('click', function() {
+//         updateQuantity(quantity - 1);
+//     });
+
+//     // Example function to send quantity to the server
+//     function sendQuantityToServer(quantity) {
+//         fetch('/update-quantity', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+//             },
+//             body: JSON.stringify({ quantity: quantity })
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             console.log('Quantity updated successfully:', data);
+//         })
+//         .catch(error => {
+//             console.error('Error updating quantity:', error);
+//         });
+//     }
+// });
+{{-- </script> --}}
+
+        </script>
+
+
+
+

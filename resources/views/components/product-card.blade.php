@@ -5,19 +5,37 @@
         <div class="product-image" style="height: 63%">
             <span class="icon-text text-style-1">20% off</span>
             <div class="product-active">
-                <div class="product-item active">
-                    <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                </div>
-                <div class="product-item">
-                    <img src="{{ asset('assets/images/product-1'.$product->image) }}" alt="{{ $product->name }}">
-                </div>
+                @if (!empty($product->images))
+                @php
+                    $images = json_decode($product->images, true); // Decode JSON to array
+                @endphp
+
+                @foreach ($images as $image)
+                    <img src="{{ asset($image) }}" alt="Product Image" width="100">
+                @endforeach
+
+            @else
+                <p>No images available.</p>
+            @endif
+
+
+
+
+
             </div>
 
-            <li>
-                <a class="add-wishlist" href="{{ route('add-to-favorites', $product->id) }}" role="button">
-                    <i class="mdi mdi-heart-outline"></i>
+                <a class="add-wishlist" href="javascript:void(0);"
+                   onclick="event.preventDefault(); document.getElementById('favorite-form-{{ $product->id }}').submit();"
+                   role="button">
+                    <i class="mdi {{ auth()->check() && auth()->user()->favorites->contains('favoritable_id', $product->id) ? 'mdi-heart text-red-500' : 'mdi-heart-outline' }}"></i>
                 </a>
-            </li>
+
+                <form id="favorite-form-{{ $product->id }}" action="{{ route('add-to-favorites', $product->id) }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+
+
+
         </div>
         <div class="product-content text-center">
             <h4 class="title"><a href="{{ route('productDetail',$product->id) }}">{{ $product->name }}</a></h4>
